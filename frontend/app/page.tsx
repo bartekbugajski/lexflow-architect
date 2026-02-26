@@ -174,11 +174,6 @@ export default function Home() {
               </p>
             </div>
           </div>
-          <div className="hidden sm:flex items-center gap-3 text-xs text-zinc-400">
-            <span className="px-2 py-1 rounded border border-zinc-700/80 bg-zinc-900/80">
-              API: {API_URL ?? "not configured"}
-            </span>
-          </div>
         </div>
       </header>
 
