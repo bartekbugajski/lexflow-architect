@@ -300,7 +300,7 @@ export default function Home() {
                         e.key === "Enter" && setClauseId(clause.id)
                       }
                     >
-                      <div className="flex items-center justify-between gap-2 mb-1">
+                      <div className="mb-2 space-y-1">
                         <div className="flex items-center gap-1.5 min-w-0">
                           <span className="text-[0.7rem] uppercase tracking-wide text-zinc-500 shrink-0">
                             clause_id: {clause.id}
@@ -338,7 +338,7 @@ export default function Home() {
                             </svg>
                           </button>
                         </div>
-                        <span className="text-[0.7rem] text-zinc-500 truncate">
+                        <span className="block text-xs font-medium text-zinc-500 dark:text-zinc-400">
                           {clause.title ?? "Untitled"}
                         </span>
                       </div>
