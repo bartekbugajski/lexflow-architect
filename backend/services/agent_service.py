@@ -25,8 +25,6 @@ class PatchAgent:
     def __init__(self, llm: ChatOpenAI):
         self._llm = llm
         self._parser = PydanticOutputParser(pydantic_object=LegalPatch)
-
-        format_instructions = self._parser.get_format_instructions()
         self._prompt = ChatPromptTemplate.from_messages(
             [
                 (
@@ -42,7 +40,7 @@ class PatchAgent:
                         "- 'insert_after': Insert proposed_text immediately after the existing clause text.\n"
                         "- 'append': Append proposed_text as an additional paragraph at the end.\n"
                         "- 'delete': Remove the clause entirely; proposed_text should be an empty string.\n\n"
-                        f"{format_instructions}"
+                        "{format_instructions}"
                     ),
                 ),
                 (
@@ -57,7 +55,7 @@ class PatchAgent:
                     ),
                 ),
             ]
-        )
+        ).partial(format_instructions=self._parser.get_format_instructions())
 
     @classmethod
     def from_env(cls) -> "PatchAgent":
