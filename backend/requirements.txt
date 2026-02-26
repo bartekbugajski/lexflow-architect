@@ -4,5 +4,6 @@ python-docx
 neo4j
 langgraph
 pydantic
+langchain
 langchain-openai
 python-multipart
