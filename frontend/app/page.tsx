@@ -224,9 +224,33 @@ export default function Home() {
                   />
                   <label
                     htmlFor="file-input"
-                    className="inline-flex items-center justify-center rounded-md border border-zinc-700 bg-zinc-800/80 px-3 py-1.5 text-xs font-medium text-zinc-100 hover:bg-zinc-700/80 cursor-pointer transition h-[28px]"
+                    className={`inline-flex items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium shadow-sm cursor-pointer transition h-[28px] min-w-0 ${
+                      file
+                        ? "bg-emerald-500 text-zinc-950 hover:bg-emerald-400"
+                        : "border border-zinc-700 bg-zinc-800/80 text-zinc-100 hover:bg-zinc-700/80"
+                    }`}
                   >
-                    Choose File
+                    {file ? (
+                      <>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="12"
+                          height="12"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          className="shrink-0"
+                        >
+                          <path d="M20 6 9 17l-5-5" />
+                        </svg>
+                        <span className="truncate">{file.name}</span>
+                      </>
+                    ) : (
+                      "Choose File"
+                    )}
                   </label>
                   <button
                     onClick={handleIngest}

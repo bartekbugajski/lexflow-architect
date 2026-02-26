@@ -58,6 +58,16 @@ class GraphService:
             result = session.run(query, **parameters)
             return list(result)
 
+    def run_write(self, query: str, **parameters: Any) -> None:
+        """
+        Execute a write-only Cypher query (e.g. SET, CREATE, MERGE).
+        """
+        def _run(tx):
+            tx.run(query, **parameters)
+
+        with self._driver.session(database=self._config.database) as session:
+            session.execute_write(_run)
+
     def ensure_constraints(self) -> None:
         queries = [
             "CREATE CONSTRAINT document_id_unique IF NOT EXISTS FOR (d:Document) REQUIRE d.id IS UNIQUE",

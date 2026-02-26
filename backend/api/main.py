@@ -112,6 +112,20 @@ async def generate_patch(request: PatchRequest) -> LegalPatch:
     except Exception as e:
         raise HTTPException(status_code=502, detail=f"Failed to generate patch: {e}") from e
 
+    try:
+        graph.run_write(
+            "MATCH (c:Clause {id: $clause_id}) SET c.text = $new_text",
+            clause_id=request.clause_id,
+            new_text=patch.proposed_text,
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=502,
+            detail=f"Failed to persist patch to Neo4j: {e}",
+        ) from e
+
     return patch
 
 
