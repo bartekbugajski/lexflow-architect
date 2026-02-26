@@ -20,12 +20,12 @@ class Neo4jConfig:
 
 
 class GraphService:
-    """
-    Neo4j ingestion service for LexFlow legal object graph.
+        """
+        Neo4j ingestion service for LexFlow legal object graph.
 
-    Nodes:
-    - (:Document {id, file_name, ingested_at})
-    - (:Clause {id, title, text, parent_id, metadata_json})
+        Nodes:
+        - (:Document {id, file_name, ingested_at})
+        - (:Clause {id, order_index, title, text, parent_id, metadata_json})
 
     Relationships:
     - (:Document)-[:CONTAINS]->(:Clause) for root clauses
@@ -105,6 +105,7 @@ class GraphService:
                 """
                 MATCH (c:Clause {id: $clause_id})
                 RETURN c.id AS id,
+                       c.order_index AS order_index,
                        c.title AS title,
                        c.text AS text,
                        c.parent_id AS parent_id,
@@ -124,6 +125,7 @@ class GraphService:
 
         return Clause(
             id=record["id"],
+            order_index=record.get("order_index") or 0,
             title=record.get("title"),
             text=record.get("text") or "",
             parent_id=record.get("parent_id"),
@@ -134,6 +136,7 @@ class GraphService:
     def _clause_row(c: Clause) -> Dict[str, Any]:
         return {
             "id": c.id,
+            "order_index": getattr(c, "order_index", 0),
             "title": c.title,
             "text": c.text,
             "parent_id": c.parent_id,
@@ -167,7 +170,8 @@ class GraphService:
                 """
                 UNWIND $clauses AS c
                 MERGE (cl:Clause {id: c.id})
-                SET cl.title = c.title,
+                SET cl.order_index = c.order_index,
+                    cl.title = c.title,
                     cl.text = c.text,
                     cl.parent_id = c.parent_id,
                     cl.metadata_json = c.metadata_json

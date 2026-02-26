@@ -103,6 +103,11 @@ class LegalDocParser:
                 current = preamble_clause
             self._append_paragraph(current, text=text, formatting=formatting)
 
+        # Assign a stable, sequential order_index to each clause based on
+        # the order they were discovered in the source document.
+        for idx, clause in enumerate(clauses):
+            clause.order_index = idx
+
         return clauses
 
     def _new_clause(

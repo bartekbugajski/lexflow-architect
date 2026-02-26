@@ -10,6 +10,10 @@ class Clause(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     id: str = Field(..., description="Stable unique identifier for this clause node.")
+    order_index: int = Field(
+        default=0,
+        description="Stable, zero-based order of this clause within its document.",
+    )
     title: Optional[str] = Field(
         default=None,
         description="Header text for the clause (e.g., 'Article 1 — Definitions').",

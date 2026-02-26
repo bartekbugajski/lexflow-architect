@@ -27,7 +27,7 @@ class DocumentExporter:
             """
             MATCH (d:Document {id: $doc_id})-[:CONTAINS]->(c:Clause)
             RETURN d AS document, c AS clause
-            ORDER BY c.id
+            ORDER BY coalesce(c.order_index, 0) ASC, c.id ASC
             """,
             doc_id=document_id,
         )
