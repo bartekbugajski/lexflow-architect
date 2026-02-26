@@ -5,6 +5,7 @@ from contextlib import asynccontextmanager
 from typing import Any, Dict
 
 from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
@@ -27,6 +28,14 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="LexFlow Architect", lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/health")
@@ -104,6 +113,13 @@ async def generate_patch(request: PatchRequest) -> LegalPatch:
         raise HTTPException(status_code=502, detail=f"Failed to generate patch: {e}") from e
 
     return patch
+
+
+@app.get("/document/{document_id}")
+def get_document(document_id: str) -> list:
+    graph: GraphService = app.state.graph
+    clauses = graph.get_document_clauses(document_id)
+    return [c.model_dump() for c in clauses]
 
 
 @app.get("/export/{document_id}")

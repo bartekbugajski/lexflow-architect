@@ -132,6 +132,45 @@ class GraphService:
             metadata=metadata,
         )
 
+    def get_document_clauses(self, document_id: str) -> List[Clause]:
+        """
+        Fetch all root clauses for a document, ordered by order_index.
+
+        Returns an empty list when the document has no clauses.
+        """
+        records = self.run_read(
+            """
+            MATCH (d:Document {id: $doc_id})-[:CONTAINS]->(c:Clause)
+            RETURN c.id AS id,
+                   c.order_index AS order_index,
+                   c.title AS title,
+                   c.text AS text,
+                   c.parent_id AS parent_id,
+                   c.metadata_json AS metadata_json
+            ORDER BY c.order_index ASC
+            """,
+            doc_id=document_id,
+        )
+
+        clauses: List[Clause] = []
+        for record in records:
+            metadata_raw = record.get("metadata_json") or "{}"
+            try:
+                metadata = json.loads(metadata_raw)
+            except Exception:
+                metadata = {}
+            clauses.append(
+                Clause(
+                    id=record["id"],
+                    order_index=record.get("order_index") or 0,
+                    title=record.get("title"),
+                    text=record.get("text") or "",
+                    parent_id=record.get("parent_id"),
+                    metadata=metadata,
+                )
+            )
+        return clauses
+
     @staticmethod
     def _clause_row(c: Clause) -> Dict[str, Any]:
         return {
