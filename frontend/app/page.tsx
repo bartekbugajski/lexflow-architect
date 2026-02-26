@@ -210,33 +210,30 @@ export default function Home() {
             </header>
 
             <div className="p-4 space-y-4 border-b border-zinc-800">
-              <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
-                <label className="flex-1 text-xs text-zinc-300">
-                  <span className="block mb-1 uppercase tracking-wide text-[0.65rem] text-zinc-500">
-                    Source document (.docx)
-                  </span>
+              <div>
+                <span className="block mb-2 uppercase tracking-wide text-[0.65rem] text-zinc-500">
+                  Source document (.docx)
+                </span>
+                <div className="flex items-stretch gap-2">
                   <input
+                    id="file-input"
                     type="file"
                     accept=".docx"
                     onChange={handleFileChange}
-                    className="block w-full text-xs file:mr-3 file:rounded-md file:border-0 file:bg-emerald-500 file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-zinc-950 hover:file:bg-emerald-400 cursor-pointer bg-zinc-950/60 border border-zinc-800 rounded-md px-2 py-1.5 text-zinc-300 focus:outline-none focus:ring-1 focus:ring-emerald-500/70"
+                    className="hidden"
                   />
-                </label>
-
-                <div className="flex gap-2">
+                  <label
+                    htmlFor="file-input"
+                    className="inline-flex items-center justify-center rounded-md border border-zinc-700 bg-zinc-800/80 px-3 py-1.5 text-xs font-medium text-zinc-100 hover:bg-zinc-700/80 cursor-pointer transition h-[28px]"
+                  >
+                    Choose File
+                  </label>
                   <button
                     onClick={handleIngest}
                     disabled={ingestLoading || !file}
-                    className="inline-flex items-center justify-center rounded-md bg-emerald-500 px-3 py-1.5 text-xs font-medium text-zinc-950 shadow-sm hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60 transition"
+                    className="inline-flex items-center justify-center rounded-md bg-emerald-500 px-3 py-1.5 text-xs font-medium text-zinc-950 shadow-sm hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60 transition h-[28px]"
                   >
                     {ingestLoading ? "Ingesting..." : "Ingest Document"}
-                  </button>
-                  <button
-                    onClick={handleExport}
-                    disabled={exportLoading || !documentId}
-                    className="inline-flex items-center justify-center rounded-md border border-zinc-700 bg-zinc-900 px-3 py-1.5 text-xs font-medium text-zinc-100 hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-60 transition"
-                  >
-                    {exportLoading ? "Exporting..." : "Export Document"}
                   </button>
                 </div>
               </div>
@@ -265,32 +262,71 @@ export default function Home() {
                     No clauses found for this document yet.
                   </p>
                 )}
-                {clauses.map((clause) => (
-                  <div
-                    key={clause.id}
-                    className={`rounded border px-3 py-2 bg-zinc-900/80 border-zinc-800 cursor-pointer transition-colors ${
-                      clauseId === clause.id ? "border-emerald-500/70" : "hover:border-zinc-600"
-                    }`}
-                    onClick={() => setClauseId(clause.id)}
-                    role="button"
-                    tabIndex={0}
-                    onKeyDown={(e) =>
-                      e.key === "Enter" && setClauseId(clause.id)
-                    }
-                  >
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-[0.7rem] uppercase tracking-wide text-zinc-500">
-                        clause_id: {clause.id}
-                      </span>
-                      <span className="text-[0.7rem] text-zinc-500">
-                        {clause.title ?? "Untitled"}
-                      </span>
+                {clauses.map((clause) => {
+                  const isSelected = clauseId === clause.id;
+                  return (
+                    <div
+                      key={clause.id}
+                      className={`rounded-lg border px-3 py-2 bg-zinc-900/80 cursor-pointer transition-all duration-200 ${
+                        isSelected
+                          ? "border-cyan-500/80 ring-2 ring-cyan-500/30 shadow-[0_0_10px_rgba(34,211,238,0.2)]"
+                          : "border-zinc-800 hover:border-zinc-600"
+                      }`}
+                      onClick={() => setClauseId(clause.id)}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) =>
+                        e.key === "Enter" && setClauseId(clause.id)
+                      }
+                    >
+                      <div className="flex items-center justify-between gap-2 mb-1">
+                        <div className="flex items-center gap-1.5 min-w-0">
+                          <span className="text-[0.7rem] uppercase tracking-wide text-zinc-500 shrink-0">
+                            clause_id: {clause.id}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              void navigator.clipboard.writeText(clause.id);
+                            }}
+                            className="shrink-0 p-0.5 rounded text-zinc-500 hover:text-emerald-400 hover:bg-zinc-800/80 transition-colors"
+                            title="Copy ID"
+                            aria-label="Copy clause ID"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="12"
+                              height="12"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <rect
+                                width="14"
+                                height="14"
+                                x="8"
+                                y="8"
+                                rx="2"
+                                ry="2"
+                              />
+                              <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+                            </svg>
+                          </button>
+                        </div>
+                        <span className="text-[0.7rem] text-zinc-500 truncate">
+                          {clause.title ?? "Untitled"}
+                        </span>
+                      </div>
+                      <p className="text-xs text-zinc-200">
+                        {clause.text || "(No content)"}
+                      </p>
                     </div>
-                    <p className="text-xs text-zinc-200">
-                      {clause.text || "(No content)"}
-                    </p>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </section>
@@ -384,6 +420,14 @@ export default function Home() {
                       {patchResult.reasoning}
                     </p>
                   </div>
+
+                  <button
+                    onClick={handleExport}
+                    disabled={exportLoading || !documentId}
+                    className="inline-flex items-center justify-center rounded-md bg-emerald-500 px-4 py-2 text-xs font-medium text-zinc-950 shadow-sm hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60 transition"
+                  >
+                    {exportLoading ? "Exporting..." : "Export Document"}
+                  </button>
                 </div>
               )}
             </div>
