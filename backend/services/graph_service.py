@@ -20,12 +20,12 @@ class Neo4jConfig:
 
 
 class GraphService:
-        """
-        Neo4j ingestion service for LexFlow legal object graph.
+    """
+    Neo4j ingestion service for LexFlow legal object graph.
 
-        Nodes:
-        - (:Document {id, file_name, ingested_at})
-        - (:Clause {id, order_index, title, text, parent_id, metadata_json})
+    Nodes:
+    - (:Document {id, file_name, ingested_at})
+    - (:Clause {id, order_index, title, text, parent_id, metadata_json})
 
     Relationships:
     - (:Document)-[:CONTAINS]->(:Clause) for root clauses
