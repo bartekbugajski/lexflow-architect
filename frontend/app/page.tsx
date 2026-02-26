@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 type LegalPatch = {
   proposed_text: string;
@@ -159,21 +160,22 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-50 font-sans flex flex-col">
+    <div className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-50 font-sans flex flex-col transition-colors duration-200">
       {/* Header */}
-      <header className="border-b border-zinc-800 bg-gradient-to-r from-zinc-950 via-zinc-900 to-zinc-950">
+      <header className="border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-gradient-to-r dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950">
         <div className="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="h-8 w-8 rounded-md bg-gradient-to-br from-emerald-400 to-cyan-500 shadow-lg shadow-emerald-500/30" />
+            <div className="h-8 w-8 rounded-md bg-gradient-to-br from-emerald-400 to-cyan-500 shadow-lg shadow-emerald-500/25 dark:shadow-emerald-500/30" />
             <div>
               <h1 className="text-lg font-semibold tracking-tight">
                 LexFlow Architect
               </h1>
-              <p className="text-xs text-zinc-400">
+              <p className="text-xs text-zinc-500 dark:text-zinc-400">
                 Cursor-like workspace for legal documents
               </p>
             </div>
           </div>
+          <ThemeToggle />
         </div>
       </header>
 
@@ -181,30 +183,30 @@ export default function Home() {
       <main className="flex-1 mx-auto max-w-6xl w-full px-4 sm:px-6 py-6 flex flex-col gap-4">
         {/* Status / Errors */}
         {error && (
-          <div className="rounded-md border border-red-500/40 bg-red-500/10 px-4 py-2 text-sm text-red-200">
+          <div className="rounded-md border border-red-500/40 bg-red-500/10 px-4 py-2 text-sm text-red-700 dark:text-red-200">
             {error}
           </div>
         )}
 
         <div className="flex-1 flex flex-col md:flex-row gap-4">
           {/* Left Panel: Document Viewer */}
-          <section className="flex-1 flex flex-col rounded-lg border border-zinc-800 bg-zinc-900/70 backdrop-blur-sm shadow-inner shadow-black/40 overflow-hidden">
-            <header className="flex items-center justify-between border-b border-zinc-800 px-4 py-2 bg-zinc-900/80">
-              <div className="flex items-center gap-2 text-sm font-medium text-zinc-200">
-                <span className="h-2 w-2 rounded-full bg-emerald-400" />
+          <section className="flex-1 flex flex-col rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/70 backdrop-blur-sm shadow-inner shadow-zinc-200/60 dark:shadow-black/40 overflow-hidden">
+            <header className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 px-4 py-2 bg-zinc-100/80 dark:bg-zinc-900/80">
+              <div className="flex items-center gap-2 text-sm font-medium text-zinc-700 dark:text-zinc-200">
+                <span className="h-2 w-2 rounded-full bg-emerald-500 dark:bg-emerald-400" />
                 Document Viewer
               </div>
               {documentId && (
                 <span className="text-xs text-zinc-500">
                   document_id:{" "}
-                  <span className="font-mono text-emerald-300">
+                  <span className="font-mono text-emerald-600 dark:text-emerald-300">
                     {documentId}
                   </span>
                 </span>
               )}
             </header>
 
-            <div className="p-4 space-y-4 border-b border-zinc-800">
+            <div className="p-4 space-y-4 border-b border-zinc-200 dark:border-zinc-800">
               <div>
                 <span className="block mb-2 uppercase tracking-wide text-[0.65rem] text-zinc-500">
                   Source document (.docx)
@@ -221,8 +223,8 @@ export default function Home() {
                     htmlFor="file-input"
                     className={`inline-flex items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium shadow-sm cursor-pointer transition h-[28px] min-w-0 ${
                       file
-                        ? "bg-emerald-500 text-zinc-950 hover:bg-emerald-400"
-                        : "border border-zinc-700 bg-zinc-800/80 text-zinc-100 hover:bg-zinc-700/80"
+                        ? "bg-emerald-500 text-white hover:bg-emerald-400"
+                        : "border border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800/80 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-200 dark:hover:bg-zinc-700/80"
                     }`}
                   >
                     {file ? (
@@ -250,7 +252,7 @@ export default function Home() {
                   <button
                     onClick={handleIngest}
                     disabled={ingestLoading || !file}
-                    className="inline-flex items-center justify-center rounded-md bg-emerald-500 px-3 py-1.5 text-xs font-medium text-zinc-950 shadow-sm hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60 transition h-[28px]"
+                    className="inline-flex items-center justify-center rounded-md bg-emerald-500 px-3 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60 transition h-[28px]"
                   >
                     {ingestLoading ? "Ingesting..." : "Ingest Document"}
                   </button>
@@ -258,8 +260,8 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="flex-1 overflow-auto p-4 bg-zinc-950/40">
-              <div className="text-xs text-zinc-400 mb-2 flex items-center justify-between">
+            <div className="flex-1 overflow-auto p-4 bg-zinc-100/50 dark:bg-zinc-950/40">
+              <div className="text-xs text-zinc-500 dark:text-zinc-400 mb-2 flex items-center justify-between">
                 <span className="uppercase tracking-wide text-[0.65rem] text-zinc-500">
                   Extracted clauses
                 </span>
@@ -286,10 +288,10 @@ export default function Home() {
                   return (
                     <div
                       key={clause.id}
-                      className={`rounded-lg border px-3 py-2 bg-zinc-900/80 cursor-pointer transition-all duration-200 ${
+                      className={`rounded-lg border px-3 py-2 bg-zinc-100/80 dark:bg-zinc-900/80 cursor-pointer transition-all duration-200 ${
                         isSelected
                           ? "border-cyan-500/80 ring-2 ring-cyan-500/30 shadow-[0_0_10px_rgba(34,211,238,0.2)]"
-                          : "border-zinc-800 hover:border-zinc-600"
+                          : "border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600"
                       }`}
                       onClick={() => setClauseId(clause.id)}
                       role="button"
@@ -309,7 +311,7 @@ export default function Home() {
                               e.stopPropagation();
                               void navigator.clipboard.writeText(clause.id);
                             }}
-                            className="shrink-0 p-0.5 rounded text-zinc-500 hover:text-emerald-400 hover:bg-zinc-800/80 transition-colors"
+                            className="shrink-0 p-0.5 rounded text-zinc-500 hover:text-emerald-500 dark:hover:text-emerald-400 hover:bg-zinc-200 dark:hover:bg-zinc-800/80 transition-colors"
                             title="Copy ID"
                             aria-label="Copy clause ID"
                           >
@@ -340,7 +342,7 @@ export default function Home() {
                           {clause.title ?? "Untitled"}
                         </span>
                       </div>
-                      <p className="text-xs text-zinc-200">
+                      <p className="text-xs text-zinc-700 dark:text-zinc-200">
                         {clause.text || "(No content)"}
                       </p>
                     </div>
@@ -351,17 +353,17 @@ export default function Home() {
           </section>
 
           {/* Right Panel: AI Agent Chat */}
-          <section className="flex-1 flex flex-col rounded-lg border border-zinc-800 bg-zinc-900/70 backdrop-blur-sm shadow-inner shadow-black/40 overflow-hidden">
-            <header className="flex items-center justify-between border-b border-zinc-800 px-4 py-2 bg-zinc-900/80">
-              <div className="flex items-center gap-2 text-sm font-medium text-zinc-200">
-                <span className="h-2 w-2 rounded-full bg-cyan-400" />
+          <section className="flex-1 flex flex-col rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/70 backdrop-blur-sm shadow-inner shadow-zinc-200/60 dark:shadow-black/40 overflow-hidden">
+            <header className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 px-4 py-2 bg-zinc-100/80 dark:bg-zinc-900/80">
+              <div className="flex items-center gap-2 text-sm font-medium text-zinc-700 dark:text-zinc-200">
+                <span className="h-2 w-2 rounded-full bg-cyan-500 dark:bg-cyan-400" />
                 AI Drafting Agent
               </div>
             </header>
 
-            <div className="p-4 space-y-3 border-b border-zinc-800">
+            <div className="p-4 space-y-3 border-b border-zinc-200 dark:border-zinc-800">
               <div className="flex flex-col gap-2">
-                <label className="text-xs text-zinc-300">
+                <label className="text-xs text-zinc-600 dark:text-zinc-300">
                   <span className="block mb-1 uppercase tracking-wide text-[0.65rem] text-zinc-500">
                     Target clause_id
                   </span>
@@ -370,13 +372,13 @@ export default function Home() {
                     value={clauseId}
                     onChange={(e) => setClauseId(e.target.value)}
                     placeholder="e.g. clause-penalty"
-                    className="w-full rounded-md border border-zinc-800 bg-zinc-950/60 px-2 py-1.5 text-xs text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-cyan-500/70"
+                    className="w-full rounded-md border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-950/60 px-2 py-1.5 text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-cyan-500/70"
                   />
                 </label>
               </div>
 
               <div className="flex flex-col gap-2">
-                <label className="text-xs text-zinc-300">
+                <label className="text-xs text-zinc-600 dark:text-zinc-300">
                   <span className="block mb-1 uppercase tracking-wide text-[0.65rem] text-zinc-500">
                     Instruction
                   </span>
@@ -385,7 +387,7 @@ export default function Home() {
                     onChange={(e) => setInstruction(e.target.value)}
                     placeholder="e.g. Make the penalty period 30 days and clarify that it is an exclusive remedy."
                     rows={4}
-                    className="w-full rounded-md border border-zinc-800 bg-zinc-950/60 px-2 py-1.5 text-xs text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-cyan-500/70 resize-none"
+                    className="w-full rounded-md border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-950/60 px-2 py-1.5 text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-cyan-500/70 resize-none"
                   />
                 </label>
               </div>
@@ -394,7 +396,7 @@ export default function Home() {
                 <button
                   onClick={handleGeneratePatch}
                   disabled={patchLoading}
-                  className="inline-flex items-center justify-center rounded-md bg-cyan-500 px-3 py-1.5 text-xs font-medium text-zinc-950 shadow-sm hover:bg-cyan-400 disabled:cursor-not-allowed disabled:opacity-60 transition"
+                  className="inline-flex items-center justify-center rounded-md bg-cyan-500 px-3 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-cyan-400 disabled:cursor-not-allowed disabled:opacity-60 transition"
                 >
                   {patchLoading ? "Generating Patch..." : "Generate Patch"}
                 </button>
@@ -405,7 +407,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="flex-1 overflow-auto p-4 bg-zinc-950/40 space-y-3">
+            <div className="flex-1 overflow-auto p-4 bg-zinc-100/50 dark:bg-zinc-950/40 space-y-3">
               {!patchResult && !patchLoading && (
                 <p className="text-xs text-zinc-500 italic">
                   Submit an instruction to see an AI-generated LegalPatch for
@@ -422,20 +424,20 @@ export default function Home() {
 
               {patchResult && (
                 <div className="space-y-3">
-                  <div className="rounded-md border border-emerald-500/60 bg-emerald-500/10 px-3 py-2">
-                    <div className="mb-1 text-[0.7rem] uppercase tracking-wide text-emerald-300">
+                  <div className="rounded-md border border-emerald-500/60 bg-emerald-500/15 dark:bg-emerald-500/10 px-3 py-2">
+                    <div className="mb-1 text-[0.7rem] uppercase tracking-wide text-emerald-700 dark:text-emerald-300">
                       Proposed Text
                     </div>
-                    <p className="text-sm text-emerald-50 whitespace-pre-line">
+                    <p className="text-sm text-emerald-900 dark:text-emerald-50 whitespace-pre-line">
                       {patchResult.proposed_text}
                     </p>
                   </div>
 
-                  <div className="rounded-md border border-zinc-700 bg-zinc-900/80 px-3 py-2">
-                    <div className="mb-1 text-[0.7rem] uppercase tracking-wide text-zinc-400">
+                  <div className="rounded-md border border-zinc-300 dark:border-zinc-700 bg-zinc-100/80 dark:bg-zinc-900/80 px-3 py-2">
+                    <div className="mb-1 text-[0.7rem] uppercase tracking-wide text-zinc-600 dark:text-zinc-400">
                       Reasoning
                     </div>
-                    <p className="text-xs text-zinc-300 whitespace-pre-line">
+                    <p className="text-xs text-zinc-700 dark:text-zinc-300 whitespace-pre-line">
                       {patchResult.reasoning}
                     </p>
                   </div>
@@ -443,7 +445,7 @@ export default function Home() {
                   <button
                     onClick={handleExport}
                     disabled={exportLoading || !documentId}
-                    className="inline-flex items-center justify-center rounded-md bg-emerald-500 px-4 py-2 text-xs font-medium text-zinc-950 shadow-sm hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60 transition"
+                    className="inline-flex items-center justify-center rounded-md bg-emerald-500 px-4 py-2 text-xs font-medium text-white shadow-sm hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60 transition"
                   >
                     {exportLoading ? "Exporting..." : "Export Document"}
                   </button>
