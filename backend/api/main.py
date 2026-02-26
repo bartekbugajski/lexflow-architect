@@ -5,11 +5,13 @@ from contextlib import asynccontextmanager
 from typing import Any, Dict
 
 from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 from services.graph_service import GraphService
 from services.agent_service import PatchAgent, PatchAgentConfigError
 from services.parser import LegalDocParser
+from services.export_service import DocumentExporter, DocumentNotFoundError
 from models.legal_objects import LegalPatch
 
 
@@ -102,4 +104,28 @@ async def generate_patch(request: PatchRequest) -> LegalPatch:
         raise HTTPException(status_code=502, detail=f"Failed to generate patch: {e}") from e
 
     return patch
+
+
+@app.get("/export/{document_id}")
+async def export_document(document_id: str):
+    graph: GraphService = app.state.graph
+
+    try:
+        buffer = DocumentExporter.export_to_docx(document_id=document_id, graph_service=graph)
+    except DocumentNotFoundError:
+        raise HTTPException(status_code=404, detail=f"Document not found for id: {document_id}")
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"Failed to export document: {e}") from e
+
+    headers = {
+        "Content-Disposition": 'attachment; filename="lexflow_exported_document.docx"'
+    }
+
+    return StreamingResponse(
+        buffer,
+        media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        headers=headers,
+    )
 

@@ -48,6 +48,16 @@ class GraphService:
     def close(self) -> None:
         self._driver.close()
 
+    def run_read(self, query: str, **parameters: Any) -> List[Any]:
+        """
+        Convenience helper for read-only Cypher queries.
+
+        Returns all records as a list.
+        """
+        with self._driver.session(database=self._config.database) as session:
+            result = session.run(query, **parameters)
+            return list(result)
+
     def ensure_constraints(self) -> None:
         queries = [
             "CREATE CONSTRAINT document_id_unique IF NOT EXISTS FOR (d:Document) REQUIRE d.id IS UNIQUE",
