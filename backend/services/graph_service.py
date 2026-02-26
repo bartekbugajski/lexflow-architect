@@ -84,6 +84,42 @@ class GraphService:
                 references,
             )
 
+    def get_clause_by_id(self, clause_id: str) -> Optional[Clause]:
+        """
+        Fetch a single Clause node by id from Neo4j.
+
+        Returns None when no matching clause exists.
+        """
+        with self._driver.session(database=self._config.database) as session:
+            record = session.run(
+                """
+                MATCH (c:Clause {id: $clause_id})
+                RETURN c.id AS id,
+                       c.title AS title,
+                       c.text AS text,
+                       c.parent_id AS parent_id,
+                       c.metadata_json AS metadata_json
+                """,
+                clause_id=clause_id,
+            ).single()
+
+        if not record:
+            return None
+
+        metadata_raw = record.get("metadata_json") or "{}"
+        try:
+            metadata = json.loads(metadata_raw)
+        except Exception:
+            metadata = {}
+
+        return Clause(
+            id=record["id"],
+            title=record.get("title"),
+            text=record.get("text") or "",
+            parent_id=record.get("parent_id"),
+            metadata=metadata,
+        )
+
     @staticmethod
     def _clause_row(c: Clause) -> Dict[str, Any]:
         return {

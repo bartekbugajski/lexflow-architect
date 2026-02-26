@@ -5,9 +5,12 @@ from contextlib import asynccontextmanager
 from typing import Any, Dict
 
 from fastapi import FastAPI, File, HTTPException, UploadFile
+from pydantic import BaseModel
 
 from services.graph_service import GraphService
+from services.agent_service import PatchAgent, PatchAgentConfigError
 from services.parser import LegalDocParser
+from models.legal_objects import LegalPatch
 
 
 @asynccontextmanager
@@ -65,4 +68,38 @@ async def ingest(file: UploadFile = File(...)) -> Dict[str, Any]:
         "clause_count": len(clauses),
         "reference_count": len(references),
     }
+
+
+class PatchRequest(BaseModel):
+    instruction: str
+    clause_id: str
+
+
+@app.post("/patch", response_model=LegalPatch)
+async def generate_patch(request: PatchRequest) -> LegalPatch:
+    graph: GraphService = app.state.graph
+
+    clause = graph.get_clause_by_id(request.clause_id)
+    if clause is None:
+        raise HTTPException(status_code=404, detail=f"Clause not found for id: {request.clause_id}")
+
+    try:
+        agent = PatchAgent.from_env()
+    except PatchAgentConfigError as e:
+        raise HTTPException(status_code=503, detail=str(e)) from e
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to initialize PatchAgent: {e}") from e
+
+    try:
+        patch = agent.generate_patch(
+            instruction=request.instruction,
+            original_text=clause.text,
+            clause_id=clause.id,
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"Failed to generate patch: {e}") from e
+
+    return patch
 
