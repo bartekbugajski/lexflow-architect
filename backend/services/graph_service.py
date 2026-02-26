@@ -134,14 +134,15 @@ class GraphService:
 
     def get_document_clauses(self, document_id: str) -> List[Clause]:
         """
-        Fetch all root clauses for a document, ordered by order_index.
+        Fetch all clauses for a document (root and nested), ordered by order_index.
 
-        Returns an empty list when the document has no clauses.
+        Uses variable-length CONTAINS to traverse Document -> Clause and Clause -> Clause.
+        Returns an empty list when the document has no clauses or does not exist.
         """
         records = self.run_read(
             """
-            MATCH (d:Document {id: $doc_id})-[:CONTAINS]->(c:Clause)
-            RETURN c.id AS id,
+            MATCH (d:Document {id: $doc_id})-[:CONTAINS*1..]->(c:Clause)
+            RETURN DISTINCT c.id AS id,
                    c.order_index AS order_index,
                    c.title AS title,
                    c.text AS text,

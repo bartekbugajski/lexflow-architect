@@ -117,9 +117,10 @@ async def generate_patch(request: PatchRequest) -> LegalPatch:
 
 @app.get("/document/{document_id}")
 def get_document(document_id: str) -> list:
+    """Return all clauses for a document (id, title, text)."""
     graph: GraphService = app.state.graph
     clauses = graph.get_document_clauses(document_id)
-    return [c.model_dump() for c in clauses]
+    return [{"id": c.id, "title": c.title, "text": c.text} for c in clauses]
 
 
 @app.get("/export/{document_id}")
