@@ -25,3 +25,9 @@ Traditional RAG fails in legal contexts because flat text chunks lose the hierar
 
 ## 🎯 Project Goal
 To automate low-leverage work (formatting, cross-referencing, repetitive drafting) while keeping the lawyer in total control of the **"Judgment Layer."**
+
+## Current implementation
+
+The repository currently includes a Next.js frontend and a FastAPI backend for DOCX ingestion, Neo4j-backed document and clause storage, AI-assisted `LegalPatch` proposals, and DOCX export. The backend uses LangChain and OpenAI for patch generation.
+
+LangGraph and vector search are listed as future architectural directions; neither is wired into the current application workflow.
